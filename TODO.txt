@@ -1,0 +1,33 @@
+TODO
+
+- Docstrings
+- README schreiben
+- Screenshots mit Bezeichnung der Komponenten
+- Hierarchie-Diagramm der Komponenten
+- Verschlüsslung nochmal testen mit anderen Enigma-Simulationen
+- Lines auf 80 begrenzen
+
+- Display-Style-Buttons besser beschriften
+- Button für reines Stepping ohne letter processing (button)
+- Shuffle ohne numpy
+- Textfeld für Ein- und Ausgabe
+- Entry Stator optional oder verändern
+- letterpositions und überhaupt inverse dicts: dafür gibts eine Python-Funktion
+- HINT: for large alphabets comment self.plugboard_int.grid(row=3, column=0) and self.box_int.grid(row=0, column=0, rowspan=3) in gui.py
+
+DONE
+
+- General Keyboard & Lamppanel Interface
+- DEFAULT_COLOR_SCHEME woanders hin
+(- alles aus machine_data mit md versehen)
+- Verallgemeinern bezgl. Alphabetlänge: keyboard, lamppanel
+- Control Interface labeln und besser strukturieren
+- Anfangszustand der Rotoren in den Dropdownmenüs anzeigen
+- Plugboard-Farbschema ändern und ins allgemeine DEFAULT_COLOR_SCHEME einarbeiten
+- Verallgemeinern bezgl. Alphabetlänge: stepping, notches, stripe-Mitte
+- Stepping mechanism: verschiedene Methoden für M3, M4 und andere festlegen
+- Signal processing besser strukturieren
+- Stepping mechanism: Umschaltung M3 - M4 via Button ermöglichen (radiobutton)
+- Button für closed lid (checkbox)
+- E-N-I-G-M-A als Demo implementieren (über Kommandozeilenparameter)
+
