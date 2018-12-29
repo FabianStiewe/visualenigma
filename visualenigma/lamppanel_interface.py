@@ -1,6 +1,7 @@
 import tkinter as tk
 
-from visualenigma.machine_data import DEFAULT_ALPHABET, DEFAULT_COLOR_SCHEME
+from visualenigma.machine_data import DEFAULT_ALPHABET
+from visualenigma.config import DEFAULT_COLOR_SCHEME
 from visualenigma.utils import letterpositions
 
 class Lamp(tk.Canvas):

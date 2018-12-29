@@ -27,32 +27,36 @@ class Box():
         self.reflector = Reflector(self, self.machine.reflector)
         print('    Box initialized successfully.')
 
-    def process(self, letter):
-        # Translate letter into number (= the 'signal' to be processed)
-        signal = self.machine.indices[letter]
-        print('Initial signal:          {:2d}  {}  {}'.format(
+    def print_signal(self, string, signal):
+        print(string + '{:2d}  {}  {}'.format(
             signal,
             self.machine.alphabet[signal],
             self.machine.numberline[signal]
             ))
+
+    def print_rotor_signal(self, rotor, signal):
+        print('Signal after rotor {}:    {:2d}  {}  {}'.format(
+            rotor,
+            signal,
+            self.machine.alphabet[signal],
+            self.machine.numberline[signal]
+            ))
+
+
+    def process(self, letter):
+        # Translate letter into number (= the 'signal' to be processed)
+        signal = self.machine.indices[letter]
+        self.print_signal('Initial signal:          ', signal)
         yield signal
  
         # Stepping of rotors
         self.stepping.step()
-        print('Signal after stepping:   {:2d}  {}  {}'.format(
-            signal,
-            self.machine.alphabet[signal],
-            self.machine.numberline[signal]
-            ))
+        self.print_signal('Signal after stepping:   ', signal)
         yield signal
  
         # Pass signal through plugboard
         signal = self.plugboard.forward(signal)
-        print('Signal after plugboard:  {:2d}  {}  {}'.format(
-            signal,
-            self.machine.alphabet[signal],
-            self.machine.numberline[signal]
-            ))
+        self.print_signal('Signal after plugboard:  ', signal)
         yield signal
  
         # Pass signal through rotors from right to left
@@ -68,22 +72,12 @@ class Box():
             yield signal
             signal = next(roterator)   # Exit
             yield signal
-            print('Signal after rotor {}:    {:2d}  {}  {}'.format(
-                (-i-1)%len(self.rotors) + 1,
-                signal,
-                self.machine.alphabet[signal],
-                self.machine.numberline[signal]
-                ))
-
+            self.print_rotor_signal((-i-1)%len(self.rotors) + 1, signal)
             yield signal
 
         # Pass signal through reflector
         signal = self.reflector.reflect(signal)
-        print('Signal after reflector:  {:2d}  {}  {}'.format(
-            signal,
-            self.machine.alphabet[signal],
-            self.machine.numberline[signal]
-            ))
+        self.print_signal('Signal after reflector:  ', signal)
         yield signal
 
         # Pass signal through rotors from left to right
@@ -99,21 +93,12 @@ class Box():
             yield signal
             signal = next(roterator)   # Exit
             yield signal
-            print('Signal after rotor {}:    {:2d}  {}  {}'.format(
-                i + 1,
-                signal,
-                self.machine.alphabet[signal],
-                self.machine.numberline[signal]
-                ))
+            self.print_rotor_signal(i+1, signal)
             yield signal
 
         # Pass signal through plugboard
         signal = self.plugboard.backward(signal)
-        print('Signal after plugboard:  {:2d}  {}  {}'.format(
-            signal,
-            self.machine.alphabet[signal],
-            self.machine.numberline[signal]
-            ))
+        self.print_signal('Signal after plugboard:  ', signal)
         yield signal
 
         # Translate processed signal back into letter

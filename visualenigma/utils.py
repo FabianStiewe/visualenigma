@@ -17,6 +17,11 @@ def create_random_rotor(length, number_of_notches, name='Random'):
     rotor = (wiring, notches, name)
     return rotor
 
+# gui utils
+
+def illuminate(contacts, signal, color):
+    contacts.squares[signal].configure(bg=color)
+
 # rotor_display utils
 
 def empty_string_list(length):

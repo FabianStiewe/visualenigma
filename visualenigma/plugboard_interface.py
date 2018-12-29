@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from visualenigma.machine_data import DEFAULT_COLOR_SCHEME
+from visualenigma.config import DEFAULT_COLOR_SCHEME
 
 class Plug(tk.Canvas):
     def __init__(self, plugboard, number, text):

@@ -3,7 +3,7 @@ import tkinter as tk
 import visualenigma.machine_data as md
 from visualenigma.rotor import Rotor
 from visualenigma.reflector import Reflector
-from visualenigma.machine_data import DEFAULT_COLOR_SCHEME
+from visualenigma.config import DEFAULT_COLOR_SCHEME
 
 class ControlsInterface(tk.Frame):
 
@@ -23,35 +23,34 @@ class ControlsInterface(tk.Frame):
     def rotor_movement_controls(self):
         """Create buttons for moving the rotors."""
 
+        r = lambda i: self.gui.machine.box.rotors[i]
+        ur = self.gui.box_int.update_rotors
+
+        functionalities = {'R_up': lambda i: r(i).adjust_ring(1),
+                           'R_down': lambda i: r(i).adjust_ring(-1),
+                           'L_up': lambda i: r(i).rotate(1),
+                           'L_down': lambda i: r(i).rotate(-1),
+                           'Z_up': lambda i: r(i).adjust_zero(1),
+                           'Z_down': lambda i: r(i).adjust_zero(-1)}
+
         # Help function
         def move(name, i):
             """Return a function to move either a whole rotor, a rotor's ring
             or a rotor's contacts one step up or down."""
-            if name == 'r_up':
-                def f():
-                    self.gui.machine.box.rotors[i].adjust_ring(1)
-                    self.gui.box_int.update_rotors()
-            elif name == 'r_down':
-                def f():
-                    self.gui.machine.box.rotors[i].adjust_ring(-1)
-                    self.gui.box_int.update_rotors()
-            elif name == 'l_up':
-                def f():
-                    self.gui.machine.box.rotors[i].rotate(1)
-                    self.gui.box_int.update_rotors()
-            elif name == 'l_down':
-                def f():
-                    self.gui.machine.box.rotors[i].rotate(-1)
-                    self.gui.box_int.update_rotors()
-            elif name == 'z_up':
-                def f():
-                    self.gui.machine.box.rotors[i].adjust_zero(1)
-                    self.gui.box_int.update_rotors()
-            elif name == 'z_down':
-                def f():
-                    self.gui.machine.box.rotors[i].adjust_zero(-1)
-                    self.gui.box_int.update_rotors()
+
+            def f():
+                functionalities[name](i)
+                ur()
             return f
+
+        def add_button(button_list, symbol, functionality, i, row, column):
+            button_list.append(tk.Button(
+                self, width=5,
+                text=str(i+1)+symbol,
+                command=move(functionality, i),
+                highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
+                ))
+            button_list[i].grid(row=row, column=column)
 
         # Create buttons
         self.move_label = tk.Label(self, text='Move rotors:',
@@ -64,48 +63,12 @@ class ControlsInterface(tk.Frame):
         self.letter_down = []
         self.zero_down = []
         for i in range(len(self.gui.machine.box.rotors)):
-            self.ring_up.append(tk.Button(
-                self, width=5,
-                text=str(i+1)+'\u2193_',
-                command=move('r_up', i),
-                highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
-                ))
-            self.ring_up[i].grid(row=4, column=3*i)
-            self.ring_down.append(tk.Button(
-                self, width=5,
-                text=str(i+1)+'\u2191_',
-                command=move('r_down', i),
-                highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
-                ))
-            self.ring_down[i].grid(row=3, column=3*i)
-            self.letter_up.append(tk.Button(
-                self, width=5,
-                text=str(i+1)+'\u2193\u2193',
-                command=move('l_up', i),
-                highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
-                ))
-            self.letter_up[i].grid(row=4, column=3*i+1)
-            self.letter_down.append(tk.Button(
-                self, width=5,
-                text=str(i+1)+'\u2191\u2191',
-                command=move('l_down', i),
-                highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
-                ))
-            self.letter_down[i].grid(row=3, column=3*i+1)
-            self.zero_up.append(tk.Button(
-                self, width=5,
-                text=str(i+1)+'_\u2191',
-                command=move('z_up', i),
-                highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
-                ))
-            self.zero_up[i].grid(row=3, column=3*i+2)
-            self.zero_down.append(tk.Button(
-                self, width=5,
-                text=str(i+1)+'_\u2193',
-                command=move('z_down', i),
-                highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
-                ))
-            self.zero_down[i].grid(row=4, column=3*i+2)
+            add_button(self.ring_up,     '\u2193_',      'R_up',   i, 4, 3*i)
+            add_button(self.ring_down,   '\u2191_',      'R_down', i, 3, 3*i)
+            add_button(self.letter_up,   '\u2193\u2193', 'L_up',   i, 4, 3*i+1)
+            add_button(self.letter_down, '\u2191\u2191', 'L_down', i, 3, 3*i+1)
+            add_button(self.zero_up,     '_\u2191',      'Z_up',   i, 3, 3*i+2)
+            add_button(self.zero_down,   '_\u2193',      'Z_down', i, 4, 3*i+2)
 
     def display_style_controls(self):
         """Create buttons to change the display style of the components."""

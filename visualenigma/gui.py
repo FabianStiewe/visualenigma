@@ -5,7 +5,8 @@ from visualenigma.lamppanel_interface import LampPanelInterface
 from visualenigma.plugboard_interface import PlugboardInterface
 from visualenigma.box_interface import BoxInterface
 from visualenigma.controls_interface import ControlsInterface
-from visualenigma.machine_data import DEFAULT_COLOR_SCHEME
+from visualenigma.config import DEFAULT_COLOR_SCHEME
+from visualenigma.utils import illuminate
 
 class GUI(tk.Frame):
 
@@ -34,12 +35,14 @@ class GUI(tk.Frame):
 
 
     def visualize(self, letter):
+        bi = self.box_int
         forw = self.color_scheme['signal_forward_bg']
         back = self.color_scheme['signal_backward_bg']
 
         # Switch off all lamps
         for j in range(len(self.machine.alphabet)):
             self.lamppanel_int.lamps[j].switch_off()
+
         print('Key pressed:                 {}'.format(letter))
 
         # Generate the iterator for sending the letter signal through the box
@@ -51,69 +54,46 @@ class GUI(tk.Frame):
         self.box_int.update_all()
 
         # Pass signal through plugboard
-        self.box_int.plugboard_disp.key_contacts.squares[
-            signal
-            ].configure(bg=forw)            
+        illuminate(bi.plugboard_disp.key_contacts, signal, forw)
         signal = next(crypterator)                         # After plugboard
-        self.box_int.plugboard_disp.stator_contacts.squares[
-            signal
-            ].configure(bg=forw)
+        illuminate(bi.plugboard_disp.stator_contacts, signal, forw)
+
 
         # Pass signal through entry stator
-        self.box_int.entry_stator_disp.contacts.squares[
-            signal
-            ].configure(bg=forw)
+        illuminate(bi.entry_stator_disp.contacts, signal, forw)
 
         # Pass signal through rotors right to left  
         for i in range(len(self.machine.box.rotors)):
             next(crypterator)                              # Enter rotor
-            self.box_int.rotors_disp[-i-1].pins.squares[
-                signal
-                ].configure(bg=forw)
+            illuminate(bi.rotors_disp[-i-1].pins, signal, forw)
             signal = next(crypterator)                     # Pin
             signal = next(crypterator)                     # Flat
             signal = next(crypterator)                     # Exit
-            self.box_int.rotors_disp[-i-1].flats.squares[
-                signal
-                ].configure(bg=forw)
+            illuminate(bi.rotors_disp[-i-1].flats, signal, forw)
             signal = next(crypterator)                     # After rotor
 
         # Pass signal through reflector
-        self.box_int.reflector_disp.contacts.squares[
-            signal
-            ].configure(bg=forw)
+        illuminate(bi.reflector_disp.contacts, signal, forw)
         signal = next(crypterator)                         # After reflector
-        self.box_int.reflector_disp.contacts.squares[
-            signal
-            ].configure(bg=back)
+        illuminate(bi.reflector_disp.contacts, signal, back)
 
         # Pass signal through rotors left to right
         for i in range(len(self.machine.box.rotors)):
             next(crypterator)                              # Enter rotor
-            self.box_int.rotors_disp[i].flats.squares[
-                signal
-                ].configure(bg=back)
+            illuminate(bi.rotors_disp[i].flats, signal, back)
             signal = next(crypterator)                     # Flat
             signal = next(crypterator)                     # Pin
             signal = next(crypterator)                     # Exit
-            self.box_int.rotors_disp[i].pins.squares[
-                signal
-                ].configure(bg=back)
+            illuminate(bi.rotors_disp[i].pins, signal, back)
             signal = next(crypterator)                     # After rotor
 
         # Pass signal through entry stator
-        self.box_int.entry_stator_disp.contacts.squares[
-            signal
-            ].configure(bg=back)
+        illuminate(bi.entry_stator_disp.contacts, signal, back)
 
         # Pass signal through plugboard
-        self.box_int.plugboard_disp.stator_contacts.squares[
-            signal
-            ].configure(bg=back)
+        illuminate(bi.plugboard_disp.stator_contacts, signal, back)
         signal = next(crypterator)                         # After plugboard
-        self.box_int.plugboard_disp.key_contacts.squares[
-            signal
-            ].configure(bg=back)
+        illuminate(bi.plugboard_disp.key_contacts, signal, back)
         signal = next(crypterator)                         # Encrypted letter
 
         print('Encrypted letter:            {}'.format(signal))
