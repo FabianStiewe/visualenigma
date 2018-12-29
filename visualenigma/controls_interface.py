@@ -43,107 +43,80 @@ class ControlsInterface(tk.Frame):
                 ur()
             return f
 
-        def add_button(button_list, symbol, functionality, i, row, column):
-            button_list.append(tk.Button(
+        def make_button(symbol, functionality, i, row, column):
+            b = tk.Button(
                 self, width=5,
                 text=str(i+1)+symbol,
                 command=move(functionality, i),
                 highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
-                ))
-            button_list[i].grid(row=row, column=column)
+                )
+            b.grid(row=row, column=column)
 
         # Create buttons
-        self.move_label = tk.Label(self, text='Move rotors:',
-                                   bg=DEFAULT_COLOR_SCHEME['global_bg'])
-        self.move_label.grid(row=2, column=0, columnspan=3, sticky=tk.W)
-        self.ring_up = []
-        self.letter_up = []
-        self.zero_up = []
-        self.ring_down = []
-        self.letter_down = []
-        self.zero_down = []
+        tk.Label(self,
+                 text='Move rotors:',
+                 bg=DEFAULT_COLOR_SCHEME['global_bg']
+                 ).grid(
+                     row=2, column=0, columnspan=3, sticky=tk.W
+                     )
+
         for i in range(len(self.gui.machine.box.rotors)):
-            add_button(self.ring_up,     '\u2193_',      'R_up',   i, 4, 3*i)
-            add_button(self.ring_down,   '\u2191_',      'R_down', i, 3, 3*i)
-            add_button(self.letter_up,   '\u2193\u2193', 'L_up',   i, 4, 3*i+1)
-            add_button(self.letter_down, '\u2191\u2191', 'L_down', i, 3, 3*i+1)
-            add_button(self.zero_up,     '_\u2191',      'Z_up',   i, 3, 3*i+2)
-            add_button(self.zero_down,   '_\u2193',      'Z_down', i, 4, 3*i+2)
+            make_button('\u2193_',      'R_up',   i, 4, 3*i)
+            make_button('\u2191_',      'R_down', i, 3, 3*i)
+            make_button('\u2193\u2193', 'L_up',   i, 4, 3*i+1)
+            make_button('\u2191\u2191', 'L_down', i, 3, 3*i+1)
+            make_button('_\u2191',      'Z_up',   i, 3, 3*i+2)
+            make_button('_\u2193',      'Z_down', i, 4, 3*i+2)
 
     def display_style_controls(self):
         """Create buttons to change the display style of the components."""
-        
+
+        bi = self.gui.box_int
+        N = len(self.gui.machine.box.rotors)
+
+        components = {
+            'ring_style':          [bi.rotors_disp[i].ring_style for i in range(N)],
+            'pin_style':           [bi.rotors_disp[i].pin_style for i in range(N)],
+            'c_pin_style':         [bi.rotors_disp[i].cor_pin_style for i in range(N)],
+            'flat_style':          [bi.rotors_disp[i].flat_style for i in range(N)],
+            'c_flat_style':        [bi.rotors_disp[i].cor_flat_style for i in range(N)],
+            'entry_style':         (bi.entry_stator_disp.contacts_style, ),
+            'reflector_style':     [bi.reflector_disp.contacts_style],
+            'c_reflector_style':   [bi.reflector_disp.cor_contacts_style],
+            'plug_key_style':      [bi.plugboard_disp.kb_contacts_style],
+            'plug_stator_style':   [bi.plugboard_disp.cor_es_contacts_style],
+            'plug_c_key_style':    [bi.plugboard_disp.cor_kb_contacts_style],
+            'plug_c_stator_style': [bi.plugboard_disp.es_contacts_style]
+            }
+
+        print("ID of entry_stator_disp.contacts_style within box interface:")
+        print(id(self.gui.box_int.entry_stator_disp.contacts_style))
+        print("ID of entry_stator_disp.contacts_style within components dictionary:")
+        print(id(components['entry_style'][0]))
+
         # Help function
         def change_style(name):
             """Return a function to cycle through the display styles of a
             box interface's component: numbers starting at 0, letters,
             numbers starting at 01, or empty."""
-            if name == 'ring_style':
-                def f():
-                    for i in range(len(self.gui.machine.box.rotors)):
-                        self.gui.box_int.rotors_disp[i].ring_style += 1
-                        self.gui.box_int.rotors_disp[i].ring_style %= 4
-                        self.gui.box_int.update_all()
-            elif name == 'pin_style':
-                def f():
-                    for i in range(len(self.gui.machine.box.rotors)):
-                        self.gui.box_int.rotors_disp[i].pin_style += 1
-                        self.gui.box_int.rotors_disp[i].pin_style %= 4
-                        self.gui.box_int.update_all()
-            elif name == 'c_pin_style':
-                def f():
-                    for i in range(len(self.gui.machine.box.rotors)):
-                        self.gui.box_int.rotors_disp[i].cor_pin_style += 1
-                        self.gui.box_int.rotors_disp[i].cor_pin_style %= 4
-                        self.gui.box_int.update_all()
-            elif name == 'flat_style':
-                def f():
-                    for i in range(len(self.gui.machine.box.rotors)):
-                        self.gui.box_int.rotors_disp[i].flat_style += 1
-                        self.gui.box_int.rotors_disp[i].flat_style %= 4
-                        self.gui.box_int.update_all()
-            elif name == 'c_flat_style':
-                def f():
-                    for i in range(len(self.gui.machine.box.rotors)):
-                        self.gui.box_int.rotors_disp[i].cor_flat_style += 1
-                        self.gui.box_int.rotors_disp[i].cor_flat_style %= 4
-                        self.gui.box_int.update_all()
-            elif name == 'entry_style':
-                def f():
-                    self.gui.box_int.entry_stator_disp.contacts_style += 1
-                    self.gui.box_int.entry_stator_disp.contacts_style %= 4
-                    self.gui.box_int.update_all()
-            elif name == 'reflector_style':
-                def f():
-                    self.gui.box_int.reflector_disp.contacts_style += 1
-                    self.gui.box_int.reflector_disp.contacts_style %= 4
-                    self.gui.box_int.update_all()
-            elif name == 'c_reflector_style':
-                def f():
-                    self.gui.box_int.reflector_disp.cor_contacts_style += 1
-                    self.gui.box_int.reflector_disp.cor_contacts_style %= 4
-                    self.gui.box_int.update_all()
-            elif name == 'plug_key_style':
-                def f():
-                    self.gui.box_int.plugboard_disp.kb_contacts_style += 1
-                    self.gui.box_int.plugboard_disp.kb_contacts_style %= 4
-                    self.gui.box_int.update_all()
-            elif name == 'plug_stator_style':
-                def f():
-                    self.gui.box_int.plugboard_disp.cor_es_contacts_style += 1
-                    self.gui.box_int.plugboard_disp.cor_es_contacts_style %= 4
-                    self.gui.box_int.update_all()
-            elif name == 'plug_c_key_style':
-                def f():
-                    self.gui.box_int.plugboard_disp.cor_kb_contacts_style += 1
-                    self.gui.box_int.plugboard_disp.cor_kb_contacts_style %= 4
-                    self.gui.box_int.update_all()
-            elif name == 'plug_c_stator_style':
-                def f():
-                    self.gui.box_int.plugboard_disp.es_contacts_style += 1
-                    self.gui.box_int.plugboard_disp.es_contacts_style %= 4
-                    self.gui.box_int.update_all()
+            def f():
+                print(components)
+                for component in components[name]:
+                    print(component)
+                    component += 1
+                    component %= 4
+                    print(component)
+                print(components)
+                bi.update_all()
             return f
+
+        def make_button(name, label, row, column):
+            tk.Button(
+                self, width=5,
+                text=label,
+                command=change_style(name),
+                highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
+                ).grid(row=row, column=column)
 
         # Create buttons
         self.style_label = tk.Label(self, text='Change display style:',
@@ -151,88 +124,20 @@ class ControlsInterface(tk.Frame):
                                     'global_bg'
                                     ])
         self.style_label.grid(row=7, column=0, columnspan=3, sticky=tk.W)
-        self.ring_style = tk.Button(
-            self, width=5,
-            text='R',
-            command=change_style('ring_style'),
-            highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
-            )
-        self.ring_style.grid(row=8, column=0)
-        self.pin_style = tk.Button(
-            self, width=5,
-            text='P',
-            command=change_style('pin_style'),
-            highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
-            )
-        self.pin_style.grid(row=8, column=1)
-        self.c_pin_style = tk.Button(
-            self, width=5,
-            text='CP',
-            command=change_style('c_pin_style'),
-            highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
-            )
-        self.c_pin_style.grid(row=8, column=2)
-        self.flat_style = tk.Button(
-            self, width=5,
-            text='F',
-            command=change_style('flat_style'),
-            highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
-            )
-        self.flat_style.grid(row=8, column=3)
-        self.c_flat_style = tk.Button(
-            self, width=5,
-            text='CF',
-            command=change_style('c_flat_style'),
-            highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
-            )
-        self.c_flat_style.grid(row=8, column=4)
-        self.entry_style = tk.Button(
-            self, width=5,
-            text='ES',
-            command=change_style('entry_style'),
-            highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
-            )
-        self.entry_style.grid(row=8, column=5)
-        self.reflector_style = tk.Button(
-            self, width=5,
-            text='RF',
-            command=change_style('reflector_style'),
-            highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
-            )
-        self.reflector_style.grid(row=9, column=0)
-        self.c_reflector_style = tk.Button(
-            self, width=5,
-            text='CRF',
-            command=change_style('c_reflector_style'),
-            highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
-            )
-        self.c_reflector_style.grid(row=9, column=1)
-        self.plug_key_style = tk.Button(
-            self, width=5,
-            text='PK', command=change_style('plug_key_style'),
-            highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
-            )
-        self.plug_key_style.grid(row=9, column=2)
-        self.plug_stator_style = tk.Button(
-            self, width=5,
-            text='PS',
-            command=change_style('plug_stator_style'),
-            highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
-            )
-        self.plug_stator_style.grid(row=9, column=3)
-        self.plug_c_key_style = tk.Button(
-            self, width=5,
-            text='CPK', command=change_style('plug_c_key_style'),
-            highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
-            )
-        self.plug_c_key_style.grid(row=9, column=4)
-        self.plug_c_stator_style = tk.Button(
-            self, width=5,
-            text='CPS',
-            command=change_style('plug_c_stator_style'),
-            highlightbackground=DEFAULT_COLOR_SCHEME['global_bg']
-            )
-        self.plug_c_stator_style.grid(row=9, column=5)
+
+        make_button('ring_style', 'R', 8, 0)
+        make_button('pin_style',  'P', 8, 1)
+        make_button('c_pin_style', 'CP', 8, 2)
+        make_button('flat_style', 'F', 8, 3)
+        make_button('c_flat_style', 'CF', 8, 4)
+        make_button('entry_style', 'ES', 8, 5)
+        make_button('reflector_style', 'RF', 9, 0)
+        make_button('c_reflector_style', 'CRF', 9, 1)
+        make_button('plug_key_style', 'PK', 9, 2)
+        make_button('plug_stator_style', 'PS', 9, 3)
+        make_button('plug_c_key_style', 'CPK', 9, 4)
+        make_button('plug_c_stator_style', 'CPS', 9, 5)
+
 
     def rotor_and_reflector_selection_controls(self):
         """Create dropdown menus for selecting rotors and reflector."""

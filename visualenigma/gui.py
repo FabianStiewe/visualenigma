@@ -14,9 +14,6 @@ class GUI(tk.Frame):
         super().__init__(master=root, bg=DEFAULT_COLOR_SCHEME['global_bg'])
         self.machine = machine
         self.color_scheme = DEFAULT_COLOR_SCHEME
-        print('        Initializing controls interface...')
-        self.controls_int = ControlsInterface(self)
-        self.controls_int.grid(row=0, column=1)
         print('        Initializing keyboard interface...')
         self.keyboard_int = KeyboardInterface(self)
         self.keyboard_int.grid(row=2, column=1)
@@ -29,6 +26,9 @@ class GUI(tk.Frame):
         print('        Initializing box interface...')
         self.box_int = BoxInterface(self)
         self.box_int.grid(row=0, column=0, rowspan=3)
+        print('        Initializing controls interface...')
+        self.controls_int = ControlsInterface(self)
+        self.controls_int.grid(row=0, column=1)
         self.grid()
         print('    GUI initialized successfully.')
 
