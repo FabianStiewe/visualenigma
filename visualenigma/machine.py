@@ -1,9 +1,7 @@
-from numpy import arange
-from random import shuffle, sample
-
 from visualenigma.box import Box
 from visualenigma.gui import GUI
 import visualenigma.machine_data as md
+from visualenigma.utils import letterpositions
 
 class CipheringMachine():
 
@@ -27,7 +25,7 @@ class CipheringMachine():
         self.length = len(self.alphabet)
         if self.prawl_position >= self.length:
             raise Exception('Prawl position greater than alphabet length.')
-        self.indices = self.letterpositions(self.alphabet)
+        self.indices = letterpositions(self.alphabet)
         self.numberline = ['{:02d}'.format(i + 1)
                            for i in range(self.length)]
         self.textcache = ''
@@ -36,21 +34,3 @@ class CipheringMachine():
         print('    Initializing GUI...')
         self.gui = GUI(self, master)
         print('Ciphering machine initialized successfully.')
-
-
-    @staticmethod
-    def letterpositions(alphabet):
-        numbers = {alphabet[i]: i for i in range(len(alphabet))}
-        return numbers
-
-    @staticmethod
-    def create_random_rotor(length, number_of_notches, name='Random'):
-        if number_of_notches > length:
-            raise Exception('Failed to create random rotor: '
-                            'number of notches must not exceed rotor size!')
-        wiring = arange(length)
-        shuffle(wiring)
-        wiring = tuple(wiring)
-        notches = tuple(sorted(sample(wiring, number_of_notches)))
-        rotor = (wiring, notches, name)
-        return rotor

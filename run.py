@@ -3,6 +3,7 @@ import tkinter as tk
 
 import visualenigma.machine as vem
 import visualenigma.machine_data as md
+from visualenigma.utils import create_random_rotor
 
 
 root = tk.Tk()
@@ -31,13 +32,13 @@ elif argv[1] == 'random':
 
     print('___________________________________________')
     print('Generating random rotors:')
-    rotor1 = vem.CipheringMachine.create_random_rotor(26, 1, 'Random 1')
+    rotor1 = create_random_rotor(26, 1, 'Random 1')
     print(rotor1)
-    rotor2 = vem.CipheringMachine.create_random_rotor(26, 2, 'Random 2')
+    rotor2 = create_random_rotor(26, 2, 'Random 2')
     print(rotor2)
-    rotor3 = vem.CipheringMachine.create_random_rotor(26, 1, 'Random 3')
+    rotor3 = create_random_rotor(26, 1, 'Random 3')
     print(rotor3)
-    ukw = vem.CipheringMachine.create_random_rotor(26, 0, 'Random UKW')
+    ukw = create_random_rotor(26, 0, 'Random UKW')
     print(ukw)
     print('___________________________________________')
 
@@ -50,13 +51,13 @@ elif argv[1] == 'enigma':
 
     print('___________________________________________')
     print('Generating random rotors:')
-    rotor1 = vem.CipheringMachine.create_random_rotor(6, 1, 'Random 1')
+    rotor1 = create_random_rotor(6, 1, 'Random 1')
     print(rotor1)
-    rotor2 = vem.CipheringMachine.create_random_rotor(6, 1, 'Random 2')
+    rotor2 = create_random_rotor(6, 1, 'Random 2')
     print(rotor2)
-    rotor3 = vem.CipheringMachine.create_random_rotor(6, 1, 'Random 3')
+    rotor3 = create_random_rotor(6, 1, 'Random 3')
     print(rotor3)
-    ukw = vem.CipheringMachine.create_random_rotor(6, 0, 'Random UKW')
+    ukw = create_random_rotor(6, 0, 'Random UKW')
     print(ukw)
     print('___________________________________________')
 

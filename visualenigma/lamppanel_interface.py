@@ -1,6 +1,7 @@
 import tkinter as tk
 
 from visualenigma.machine_data import DEFAULT_ALPHABET, DEFAULT_COLOR_SCHEME
+from visualenigma.utils import letterpositions
 
 class Lamp(tk.Canvas):
     
@@ -42,7 +43,7 @@ class LampPanelInterface(tk.Frame):
                             'P', 'Y', 'X', 'C', 'V', 'B', 'N', 'M', 'L')
         else:
             letter_order = self.gui.machine.alphabet
-        self.indices = self.gui.machine.letterpositions(letter_order)
+        self.indices = letterpositions(letter_order)
         
         #Create lamps
         self.lamps = []

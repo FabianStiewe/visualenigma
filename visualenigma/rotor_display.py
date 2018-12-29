@@ -1,6 +1,7 @@
 import tkinter as tk
 
 from visualenigma.stripe import Stripe
+from visualenigma.utils import empty_string_list, update_component, update_notches, update_ring_position
 
 class RotorDisplay(tk.Frame):
 
@@ -8,6 +9,7 @@ class RotorDisplay(tk.Frame):
         self.box_int = box_int
         super().__init__(master=box_int, bg=self.box_int.gui.color_scheme['global_bg'], **kwargs)
         self.number = rotor_number
+        self.dummy = tuple(['' for i in range(self.box_int.gui.machine.length)])
         self.ring_style = 1
         self.pin_style = 2
         self.flat_style = 2
@@ -25,253 +27,94 @@ class RotorDisplay(tk.Frame):
 
     def make(self):
 
-        dummy = ['' for i in range(self.box_int.gui.machine.length)]
+        self.ring = Stripe(self, self.dummy, relief=tk.RAISED)   
 
-        self.ring = Stripe(self, dummy, relief=tk.RAISED)   
+        self.pins = Stripe(self, self.dummy)
 
-        self.pins = Stripe(self, dummy)
+        self.flats = Stripe(self, self.dummy)
 
-        self.flats = Stripe(self, dummy)
+        self.corresponding_pins = Stripe(self, self.dummy)
 
-        self.corresponding_pins = Stripe(self, dummy)
+        self.corresponding_flats = Stripe(self, self.dummy)
 
-        self.corresponding_flats = Stripe(self, dummy)
-
-        self.notches = Stripe(self, dummy)
+        self.notches = Stripe(self, self.dummy)
        
-        self.ring_position = Stripe(self, dummy)
+        self.ring_position = Stripe(self, self.dummy)
 
     def update(self):
 
         # ring
 
-        if self.ring_style == 0:
-            export = [(i + self.box_int.gui.machine.box.rotors[
-                       self.number
-                       ].window_letter)
-                      % self.box_int.gui.machine.length
-                      for i in range(self.box_int.gui.machine.length)]
-        elif self.ring_style == 1:
-            export = [self.box_int.gui.machine.alphabet[
-                      (i + self.box_int.gui.machine.box.rotors[
-                       self.number
-                       ].window_letter)
-                      % self.box_int.gui.machine.length
-                      ]
-                      for i in range(self.box_int.gui.machine.length)]
-        elif self.ring_style == 2:
-            export = [self.box_int.gui.machine.numberline[
-                      (i + self.box_int.gui.machine.box.rotors[
-                       self.number
-                       ].window_letter)
-                      % self.box_int.gui.machine.length
-                      ]
-                      for i in range(self.box_int.gui.machine.length)]
-        elif self.ring_style == 3:
-            export = ['' for i in range(self.box_int.gui.machine.length)]
-        self.ring.configure(
-          symbols=export,
-          fg=self.box_int.gui.color_scheme['ring_fg'],
-          bg=self.box_int.gui.color_scheme['ring_bg']
-          )
-        self.ring.squares[0].configure(
-          fg=self.box_int.gui.color_scheme['ring_zero_fg'],
-          bg=self.box_int.gui.color_scheme['ring_zero_bg']
-          )
+        func = lambda i, rotors, n, length: (i + rotors[n].window_letter) % length
+
+        update_component(self.box_int.gui.machine,
+                         self.box_int.gui.color_scheme,
+                         self.ring,
+                         self.ring_style,
+                         'ring',
+                         self.number,
+                         func)
 
         # pins
 
-        if self.pin_style == 0:
-            export = [(i - self.box_int.gui.machine.box.rotors[
-                       self.number
-                       ].zero)
-                      % self.box_int.gui.machine.length
-                      for i in range(self.box_int.gui.machine.length)]
-        elif self.pin_style == 1:
-            export = [self.box_int.gui.machine.alphabet[
-                      (i - self.box_int.gui.machine.box.rotors[
-                       self.number
-                       ].zero)
-                      % self.box_int.gui.machine.length
-                      ]
-                      for i in range(self.box_int.gui.machine.length)]
-        elif self.pin_style == 2:
-            export = [self.box_int.gui.machine.numberline[
-                      (i - self.box_int.gui.machine.box.rotors[
-                       self.number
-                       ].zero)
-                      % self.box_int.gui.machine.length
-                      ]
-                      for i in range(self.box_int.gui.machine.length)]
-        elif self.pin_style == 3:
-            export = ['' for i in range(self.box_int.gui.machine.length)]
-        self.pins.configure(
-          symbols=export,
-          fg=self.box_int.gui.color_scheme['pin_fg'],
-          bg=self.box_int.gui.color_scheme['pin_bg']
-          )
-        self.pins.squares[0].configure(
-          fg=self.box_int.gui.color_scheme['pin_zero_fg'],
-          bg=self.box_int.gui.color_scheme['pin_zero_bg']
-          )
+        func = lambda i, rotors, n, length: (i - rotors[n].zero) % length
+
+        update_component(self.box_int.gui.machine,
+                         self.box_int.gui.color_scheme,
+                         self.pins,
+                         self.pin_style,
+                         'pin',
+                         self.number,
+                         func)
 
         # flats
 
-        if self.flat_style == 0:
-            export = [(i - self.box_int.gui.machine.box.rotors[
-                       self.number
-                       ].zero)
-                      % self.box_int.gui.machine.length
-                      for i in range(self.box_int.gui.machine.length)]
-        elif self.flat_style == 1:
-            export = [self.box_int.gui.machine.alphabet[
-                      (i - self.box_int.gui.machine.box.rotors[
-                       self.number
-                       ].zero)
-                      % self.box_int.gui.machine.length
-                      ]
-                      for i in range(self.box_int.gui.machine.length)]
-        elif self.flat_style == 2:
-            export = [self.box_int.gui.machine.numberline[
-                      (i - self.box_int.gui.machine.box.rotors[
-                       self.number
-                       ].zero)
-                      % self.box_int.gui.machine.length
-                      ]
-                      for i in range(self.box_int.gui.machine.length)]
-        elif self.flat_style == 3:
-            export = ['' for i in range(self.box_int.gui.machine.length)]
-        self.flats.configure(
-          symbols=export,
-          fg=self.box_int.gui.color_scheme['flat_fg'],
-          bg=self.box_int.gui.color_scheme['flat_bg']
-          )
-        self.flats.squares[0].configure(
-          fg=self.box_int.gui.color_scheme['flat_zero_fg'],
-          bg=self.box_int.gui.color_scheme['flat_zero_bg']
-          )
+        func = lambda i, rotors, n, length: (i - rotors[n].zero) % length
+
+        update_component(self.box_int.gui.machine,
+                         self.box_int.gui.color_scheme,            
+                         self.flats,
+                         self.flat_style,
+                         'flat',
+                         self.number,
+                         func)
 
         # corresponding pins
 
-        if self.cor_pin_style == 0:
-            export = [self.box_int.gui.machine.box.rotors[self.number].pins[
-                      (i - self.box_int.gui.machine.box.rotors[
-                       self.number
-                       ].zero)
-                      % self.box_int.gui.machine.length
-                      ]
-                      for i in range(self.box_int.gui.machine.length)]
-        elif self.cor_pin_style == 1:
-            export = [self.box_int.gui.machine.alphabet[
-                      self.box_int.gui.machine.box.rotors[self.number].pins[
-                      (i - self.box_int.gui.machine.box.rotors[
-                       self.number
-                       ].zero)
-                      % self.box_int.gui.machine.length
-                      ]]
-                      for i in range(self.box_int.gui.machine.length)]
-        elif self.cor_pin_style == 2:
-            export = [self.box_int.gui.machine.numberline[
-                      self.box_int.gui.machine.box.rotors[self.number].pins[
-                      (i - self.box_int.gui.machine.box.rotors[
-                       self.number
-                       ].zero)
-                      % self.box_int.gui.machine.length
-                      ]]
-                      for i in range(self.box_int.gui.machine.length)]
-        elif self.cor_pin_style == 3:
-            export = ['' for i in range(self.box_int.gui.machine.length)]
-        self.corresponding_pins.configure(
-            symbols=export,
-            fg=self.box_int.gui.color_scheme['c_pin_fg'],
-            bg=self.box_int.gui.color_scheme['c_pin_bg']
-            )
-        self.corresponding_pins.squares[0].configure(
-            fg=self.box_int.gui.color_scheme['c_pin_zero_fg'],
-            bg=self.box_int.gui.color_scheme['c_pin_zero_bg']
-            )
+        func = lambda i, rotors, n, length: rotors[n].pins[(i - rotors[n].zero) % length]
+
+        update_component(self.box_int.gui.machine,
+                         self.box_int.gui.color_scheme,
+                         self.corresponding_pins,
+                         self.cor_pin_style,
+                         'c_pin',
+                         self.number,
+                         func)        
 
         # corresponding flats
 
-        if self.cor_flat_style == 0:
-            export = [self.box_int.gui.machine.box.rotors[self.number].flats[
-                      (i - self.box_int.gui.machine.box.rotors[
-                       self.number
-                       ].zero)
-                      % self.box_int.gui.machine.length
-                      ]
-                      for i in range(self.box_int.gui.machine.length)]
-        elif self.cor_flat_style == 1:
-            export = [self.box_int.gui.machine.alphabet[
-                      self.box_int.gui.machine.box.rotors[self.number].flats[
-                      (i - self.box_int.gui.machine.box.rotors[
-                       self.number
-                       ].zero)
-                      % self.box_int.gui.machine.length
-                      ]]
-                      for i in range(self.box_int.gui.machine.length)]
-        elif self.cor_flat_style == 2:
-            export = [self.box_int.gui.machine.numberline[
-                      self.box_int.gui.machine.box.rotors[
-                      self.number
-                      ].flats[
-                      (i - self.box_int.gui.machine.box.rotors[
-                       self.number
-                       ].zero)
-                      % self.box_int.gui.machine.length
-                      ]]
-                      for i in range(self.box_int.gui.machine.length)]
-        elif self.cor_flat_style == 3:
-            export = ['' for i in range(self.box_int.gui.machine.length)]
-        self.corresponding_flats.configure(
-            symbols=export,
-            fg=self.box_int.gui.color_scheme['c_flat_fg'],
-            bg=self.box_int.gui.color_scheme['c_flat_bg']
-            )
-        self.corresponding_flats.squares[0].configure(
-            fg=self.box_int.gui.color_scheme['c_flat_zero_fg'],
-            bg=self.box_int.gui.color_scheme['c_flat_zero_bg']
-            )
+        func = lambda i, rotors, n, length: rotors[n].flats[(i - rotors[n].zero) % length]
+
+        update_component(self.box_int.gui.machine,
+                         self.box_int.gui.color_scheme,            
+                         self.corresponding_flats,
+                         self.cor_flat_style,
+                         'c_flat',
+                         self.number,
+                         func) 
 
         # notches
 
-        dummy = ['' for i in range(self.box_int.gui.machine.length)]
-
-        self.notches.configure(    
-            symbols=dummy,
-            fg=self.box_int.gui.color_scheme['notch_empty_fg'],
-            bg=self.box_int.gui.color_scheme['notch_empty_bg']
-            )
-        self.notches.squares[0].configure(
-            bg=self.box_int.gui.color_scheme['notch_zero_bg']
-            )
-        if self.number > 1 or (self.box_int.gui.machine.stepping_mode == 'normal' and self.number > 0):
-            self.notches.squares[self.box_int.gui.machine.prawl_position].configure(
-                bg=self.box_int.gui.color_scheme['notch_step_bg']
-                )
-        for n in self.box_int.gui.machine.box.rotors[
-                    self.number
-                    ].notch_positions:
-            self.notches.squares[n].configure(
-                bg=self.box_int.gui.color_scheme['notch_bg']
-                )
+        update_notches(self.box_int.gui.machine,
+                       self.box_int.gui.color_scheme,            
+                       self.notches,
+                       self.dummy,
+                       self.number)
 
         # ring position
 
-        self.ring_position.configure(
-            symbols=dummy,
-            fg=self.box_int.gui.color_scheme['ring_pos_empty_fg'],
-            bg=self.box_int.gui.color_scheme['ring_pos_empty_bg']
-            )
-
-        export = ['' for i in range(self.box_int.gui.machine.length)]
-        export[self.box_int.gui.machine.box.rotors[self.number].zero] = '\u25c0'
-        self.ring_position.configure(symbols=export)
-        self.ring_position.squares[0].configure(
-            fg=self.box_int.gui.color_scheme['ring_pos_zero_fg'],
-            bg=self.box_int.gui.color_scheme['ring_pos_zero_bg']
-            )
-        self.ring_position.squares[
-            self.box_int.gui.machine.box.rotors[self.number].zero
-            ].configure(fg=self.box_int.gui.color_scheme['ring_pos_current_fg'],
-                        bg=self.box_int.gui.color_scheme['ring_pos_current_bg'])
+        update_ring_position(self.box_int.gui.machine,
+                             self.box_int.gui.color_scheme,            
+                             self.ring_position,
+                             self.dummy,
+                             self.number)
