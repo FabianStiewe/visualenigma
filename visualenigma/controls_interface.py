@@ -80,7 +80,7 @@ class ControlsInterface(tk.Frame):
             'c_pin_style':         [bi.rotors_disp[i].cor_pin_style for i in range(N)],
             'flat_style':          [bi.rotors_disp[i].flat_style for i in range(N)],
             'c_flat_style':        [bi.rotors_disp[i].cor_flat_style for i in range(N)],
-            'entry_style':         (bi.entry_stator_disp.contacts_style, ),
+            'entry_style':         [bi.entry_stator_disp.contacts_style],
             'reflector_style':     [bi.reflector_disp.contacts_style],
             'c_reflector_style':   [bi.reflector_disp.cor_contacts_style],
             'plug_key_style':      [bi.plugboard_disp.kb_contacts_style],

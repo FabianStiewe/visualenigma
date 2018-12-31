@@ -26,27 +26,19 @@ class RotorDisplay(tk.Frame):
         self.corresponding_flats.grid(row=0, column=5)
 
     def make(self):
-
         self.ring = Stripe(self, self.dummy, relief=tk.RAISED)   
-
         self.pins = Stripe(self, self.dummy)
-
         self.flats = Stripe(self, self.dummy)
-
         self.corresponding_pins = Stripe(self, self.dummy)
-
         self.corresponding_flats = Stripe(self, self.dummy)
-
         self.notches = Stripe(self, self.dummy)
-       
         self.ring_position = Stripe(self, self.dummy)
 
+    update_component = update_component()
+
     def update(self):
-
         # ring
-
         func = lambda i, rotors, n, length: (i + rotors[n].window_letter) % length
-
         update_component(self.box_int.gui.machine,
                          self.box_int.gui.color_scheme,
                          self.ring,
@@ -54,11 +46,8 @@ class RotorDisplay(tk.Frame):
                          'ring',
                          self.number,
                          func)
-
         # pins
-
         func = lambda i, rotors, n, length: (i - rotors[n].zero) % length
-
         update_component(self.box_int.gui.machine,
                          self.box_int.gui.color_scheme,
                          self.pins,
@@ -66,11 +55,8 @@ class RotorDisplay(tk.Frame):
                          'pin',
                          self.number,
                          func)
-
         # flats
-
         func = lambda i, rotors, n, length: (i - rotors[n].zero) % length
-
         update_component(self.box_int.gui.machine,
                          self.box_int.gui.color_scheme,            
                          self.flats,
@@ -78,11 +64,8 @@ class RotorDisplay(tk.Frame):
                          'flat',
                          self.number,
                          func)
-
         # corresponding pins
-
         func = lambda i, rotors, n, length: rotors[n].pins[(i - rotors[n].zero) % length]
-
         update_component(self.box_int.gui.machine,
                          self.box_int.gui.color_scheme,
                          self.corresponding_pins,
@@ -90,11 +73,8 @@ class RotorDisplay(tk.Frame):
                          'c_pin',
                          self.number,
                          func)        
-
         # corresponding flats
-
         func = lambda i, rotors, n, length: rotors[n].flats[(i - rotors[n].zero) % length]
-
         update_component(self.box_int.gui.machine,
                          self.box_int.gui.color_scheme,            
                          self.corresponding_flats,
@@ -102,17 +82,13 @@ class RotorDisplay(tk.Frame):
                          'c_flat',
                          self.number,
                          func) 
-
         # notches
-
         update_notches(self.box_int.gui.machine,
                        self.box_int.gui.color_scheme,            
                        self.notches,
                        self.dummy,
                        self.number)
-
         # ring position
-
         update_ring_position(self.box_int.gui.machine,
                              self.box_int.gui.color_scheme,            
                              self.ring_position,
